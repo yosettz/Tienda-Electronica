@@ -22,6 +22,7 @@ const resultsContainer = document.getElementById("results-container");
 const searchInput = document.getElementById("product-search");
 const searchBtn = document.getElementById("search-btn");
 const cartCount = document.getElementById("cart-count");
+const orderBtn = document.getElementById("order-btn");
 
 let carrito = [];
 
@@ -69,6 +70,32 @@ function agregarAlCarrito(id) {
 
     mostrarNotificacion(`${producto.nombre} agregado al carrito`);
 }
+
+function gestionarPedido() {
+
+    if (carrito.length === 0) {
+        mostrarNotificacion("El carrito está vacío");
+        return;
+    }
+
+    const pedido = {
+        id: Date.now(),
+        productos: carrito,
+        estado: "Pendiente",
+        fecha: new Date().toLocaleDateString()
+    };
+
+    console.log("Pedido creado:", pedido);
+
+    mostrarNotificacion(
+        `Pedido #${pedido.id} creado correctamente`
+    );
+
+    carrito = [];
+    cartCount.textContent = carrito.length;
+}
+
+orderBtn.addEventListener("click", gestionarPedido);
 
 function gestionarPedido() {
 
