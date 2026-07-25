@@ -22,6 +22,7 @@ const resultsContainer = document.getElementById("results-container");
 const searchInput = document.getElementById("product-search");
 const searchBtn = document.getElementById("search-btn");
 const cartCount = document.getElementById("cart-count");
+const orderBtn = document.getElementById("order-btn");
 
 let carrito = [];
 
@@ -50,8 +51,8 @@ function buscarProductos() {
 
     const texto = searchInput.value.toLowerCase();
 
-    const filtrados = productos.filter(p =>
-        p.nombre.toLowerCase().includes(texto)
+    const filtrados = productos.filter(producto =>
+        producto.nombre.toLowerCase().includes(texto)
     );
 
     mostrarProductos(filtrados);
@@ -61,14 +62,54 @@ searchBtn.addEventListener("click", buscarProductos);
 
 function agregarAlCarrito(id) {
 
-    const producto = productos.find(p => p.id === id);
+    const producto = productos.find(producto => producto.id === id);
+
+    const productoYaExiste = carrito.some(
+        productoCarrito => productoCarrito.id === id
+    );
+
+    if (productoYaExiste) {
+        mostrarNotificacion(
+            `${producto.nombre} ya está en el carrito`
+        );
+        return;
+    }
 
     carrito.push(producto);
 
     cartCount.textContent = carrito.length;
 
-    mostrarNotificacion(`${producto.nombre} agregado al carrito`);
+    mostrarNotificacion(
+        `${producto.nombre} agregado al carrito`
+    );
 }
+
+function gestionarPedido() {
+
+    if (carrito.length === 0) {
+        mostrarNotificacion("El carrito está vacío");
+        return;
+    }
+
+    const pedido = {
+        id: Date.now(),
+        productos: carrito,
+        estado: "Pendiente",
+        fecha: new Date().toLocaleDateString()
+    };
+
+    console.log("Pedido creado:", pedido);
+
+    mostrarNotificacion(
+        `Pedido #${pedido.id} creado correctamente`
+    );
+
+    carrito = [];
+
+    cartCount.textContent = carrito.length;
+}
+
+orderBtn.addEventListener("click", gestionarPedido);
 
 function mostrarNotificacion(mensaje) {
 
@@ -82,9 +123,12 @@ function mostrarNotificacion(mensaje) {
 }
 
 window.addEventListener("load", () => {
+
     mostrarProductos(productos);
 
     setTimeout(() => {
-        mostrarNotificacion("🔥 Oferta: 20% de descuento en productos gamer");
+        mostrarNotificacion(
+            "🔥 Oferta: 20% de descuento en productos gamer"
+        );
     }, 2000);
 });
